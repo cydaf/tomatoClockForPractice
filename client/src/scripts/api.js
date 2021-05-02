@@ -19,33 +19,47 @@ function callApi(url, method = 'GET', data = {}, header = {}) {
     });
 }
 
+const getToken = () => {
+    const token = localStorage.getItem('token');
+    if (token === 'undefined') {
+        return "";
+    }
+    return token;
+}
+
 async function getAllTasks(needFilter = false, filterStatus = null) {
+    const token = getToken();
     let url = '/tasks';
     if (needFilter) {
         const status = filterStatus == true ? 'completed' : 'uncompleted';
         url += `?filterType=${status}`;
     }
-    return await callApi(url);
+    return await callApi(url, 'GET', {}, { token: token });
 }
 
 async function getTasksById(id) {
-    return await callApi(`/tasks/${id}`);
+    const token = getToken();
+    return await callApi(`/tasks/${id}`, 'GET', {}, { token: token });
 }
 
 async function addTask(data) {
-    return await callApi('/tasks', 'POST', data);
+    const token = getToken();
+    return await callApi('/tasks', 'POST', data, { token: token });
 }
 
 async function updateTask(id, data) {
-    return await callApi(`/tasks/${id}`, 'PATCH', data);
+    const token = getToken();
+    return await callApi(`/tasks/${id}`, 'PATCH', data, { token: token });
 }
 
 async function deleteTask(id) {
-    return await callApi(`/tasks/${id}`, 'DELETE');
+    const token = getToken();
+    return await callApi(`/tasks/${id}`, 'DELETE', {}, { token: token });
 }
 
 async function getReport() {
-    return await callApi('/reports')
+    const token = getToken();
+    return await callApi('/reports', 'GET', {}, { token: token });
 }
 
 async function register(data) {
@@ -102,4 +116,5 @@ export {
     register,
     login,
     getUser,
+    getToken,
 };

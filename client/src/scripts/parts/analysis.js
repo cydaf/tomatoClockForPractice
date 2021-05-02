@@ -2,6 +2,7 @@ import $ from 'jquery';
 import {
     getReport
 } from "./todolist/model";
+import { showLoginCard, blurBackground } from "../auth"
 
 function drawChart(chartData) {
     const {
@@ -53,6 +54,11 @@ function drawChart(chartData) {
 
 async function renderReport() {
     const reportData = await getReport();
+    if (reportData == null) {
+        showLoginCard();
+        blurBackground();
+        return;
+    }
     $("#today-total").html(reportData.data.todayReport.createdTotal);
     $("#today-completed").html(reportData.data.todayReport.completedTotal);
     $("#week-total").html(reportData.data.weeklyReport.createdTotal);
