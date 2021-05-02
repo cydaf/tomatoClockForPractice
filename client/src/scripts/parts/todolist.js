@@ -10,6 +10,7 @@ import {
     getTodolistByStatus
 } from "./todolist/model";
 import * as api from '../api';
+import { showLoginCard, blurBackground } from "../auth"
 
 async function init() {
     //初始化頁面
@@ -39,6 +40,12 @@ async function showfinishList() {
 }
 
 async function addNote() {
+    const token = api.getToken();
+    if (token == '' || token == null) {
+        showLoginCard();
+        blurBackground();
+        return;
+    }
     var inputValue = $("#add-text").val();
     $("#add-text").val("");
     if (inputValue == "") {

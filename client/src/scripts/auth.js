@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { register, login, getUser } from './api';
+import { register, login, getUser, getToken } from './api';
 
 const showLoginCard = () => {
     $('#login-card').show();
@@ -20,7 +20,7 @@ const closeAllAuthCard = () => {
     blurBackground(false);
 }
 
-const blurBackground = (isEnable) => {
+const blurBackground = (isEnable = true) => {
     if (isEnable) {
         $('.container').addClass('blur');
     } else {
@@ -66,14 +66,13 @@ const loginAccount = async () => {
         });
         const token = result.token;
         localStorage.setItem('token', token);
-
         const userData = await getUser(token);
         const username = userData.data.name;
 
         alert(result.msg);
         closeAllAuthCard();
         $('#user-name').html(`${username} 你好`);
-
+        location.reload();
     } catch {
         alert('Something went wrong');
         return;
@@ -81,8 +80,8 @@ const loginAccount = async () => {
 }
 
 const checkIsLogin = async () => {
-    const token = localStorage.getItem('token');
-    if (typeof token == 'undefined') {
+    const token = getToken();
+    if (token == '' || token == null) {
         return;
     }
     try {
@@ -116,4 +115,7 @@ function init() {
 
 export {
     init,
+    showLoginCard,
+    closeAllAuthCard,
+    blurBackground
 };
