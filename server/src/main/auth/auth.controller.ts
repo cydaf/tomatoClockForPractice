@@ -19,7 +19,7 @@ export const verify = async function (req: Request, res: Response) {
     "YYYY-MM-DDTHH:mm:ss.SSS"
   );
   const results = userRepo.save(user);
-  res.status(200).json({ status: 200, message: "signup success" });
+  return res.status(200).json({ status: 200, message: "signup success" });
 };
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
@@ -58,7 +58,9 @@ export const register = async function (req: Request, res: Response) {
   transporter.sendMail(mailOptions, function (err, response) {
     if (err) {
     } else {
-      res.status(200).json({ status: 200, messgae: "please verify email" });
+      return res
+        .status(200)
+        .json({ status: 200, messgae: "please verify email" });
     }
   });
 };
@@ -80,11 +82,12 @@ export const signin = async function (req: Request, res: Response) {
     return res.status(401).json({ status: 401, errors: "password incorrect" });
   }
   const payload = {
-      id: user.id,
-      name: user.name,
-      email: user.email
-  }
-  const token = jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: '1h' });
-  res.status(200).json({ status: 200, data: token });
-  
+    id: user.id,
+    name: user.name,
+    email: user.email,
+  };
+  const token = jwt.sign(payload, process.env.TOKEN_SECRET, {
+    expiresIn: "1h",
+  });
+  return res.status(200).json({ status: 200, data: token });
 };

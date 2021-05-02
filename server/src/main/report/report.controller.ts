@@ -86,7 +86,7 @@ export const getReports = async function (req: Request, res: Response) {
   const { email } = res.locals.jwtPayload;
   const taskRepository = getRepository(Task);
   //get Task all value
-  const tasks = await getRepository(Task).find({ where: { user_id: email } });
+  const tasks = taskRepository.find({ where: { user_id: email } });
   const reportStartDate = moment().subtract(6, "day").format("YYYY-MM-DD");
   //get completed = true value
   const createdTasksPromise = taskRepository.find({
@@ -103,6 +103,5 @@ export const getReports = async function (req: Request, res: Response) {
     completedTasksPromise,
   ]);
   const responseData = formatReport(createdTasks, completedTasks);
-  res.status(200).json({ status: 200, data: responseData });
+  return res.status(200).json({ status: 200, data: responseData });
 };
-export default getReports;
