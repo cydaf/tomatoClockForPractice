@@ -6,6 +6,7 @@
     "password": "Pass2020!",
     "database": "postgres",
     "entities": ["src/entity/*.ts"],
-    "logging": false,
+    "logging": true,
+    "logger": "file",
     "synchronize": true
 }
