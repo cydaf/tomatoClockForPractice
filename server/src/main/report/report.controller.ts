@@ -1,50 +1,86 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, MoreThan } from "typeorm";
 import { Task } from "../../entity/Task";
-import * as moment from "moment";
 import { HttpStatus } from "../../common/response/response.type";
+import * as moment from "moment";
 
 interface Report {
   date: string;
   createdTotal: number;
   completedTotal: number;
 }
-// calculate the numbers of days between two dates(count means: how many day)
-const pastDate = (today: Date, count: number) => {
-  let currentDate = new Date(today.valueOf());
-  const currentTime = currentDate.getTime();
-  const pastDate = formatTime(
-    new Date(currentDate.setTime(currentTime - count * oneDay))
+interface ReportMap {
+  [name: string]: Report;
+}
+interface ResponseData {
+  todayReport: {
+    createdTotal: number;
+    completedTotal: number;
+  };
+  weeklyReport: {
+    createdTotal: number;
+    completedTotal: number;
+  };
+  dailyReport: Array<Report>;
+}
+export const formatReport = (
+  createdTasks: Array<Task>,
+  completedTasks: Array<Task>
+): ResponseData => {
+  const DATE_FORMAT: string = "MM/DD";
+
+  const reportMap: ReportMap = Array(7)
+    .fill("")
+    .map((v, idx) => idx)
+    .reduce((counter: any, dateDiff: number) => {
+      const momentObj = moment().subtract(dateDiff, "day");
+      const report: Report = {
+        date: momentObj.format(DATE_FORMAT),
+        createdTotal: 0,
+        completedTotal: 0,
+      };
+      counter[momentObj.format(DATE_FORMAT)] = report;
+      return counter;
+    }, {});
+
+  createdTasks.forEach((task) => {
+    const date = moment(task.createdAt).format(DATE_FORMAT);
+    const newReport = { ...reportMap[date] };
+    newReport.createdTotal += 1;
+    reportMap[date] = newReport;
+  });
+
+  completedTasks.forEach((task) => {
+    const date = moment(task.completedAt).format(DATE_FORMAT);
+    const newReport = { ...reportMap[date] };
+    newReport.completedTotal += 1;
+    reportMap[date] = newReport;
+  });
+
+  const todayString = moment().format(DATE_FORMAT);
+  const reposts = Object.values(reportMap);
+  const weeklyReport = reposts.reduce(
+    (result, rep: Report) => {
+      result.createdTotal += rep.createdTotal;
+      result.completedTotal += rep.completedTotal;
+      return result;
+    },
+    { createdTotal: 0, completedTotal: 0 }
   );
-  return pastDate;
-};
-// 若 task 為七天以內則 return
-const FilterTask = (
-  currentTime: number,
-  Task: Task,
-  status: string,
-  days: number
-) => {
-  const date = Task[status];
-  if (date != null) {
-    const pastTime = date.getTime();
-    const diffDays = Math.round(Math.abs((currentTime - pastTime) / oneDay));
-    if (diffDays <= days) return Task; //更新後的 task
-  }
-};
-// set today report json value
-const setToday = (tasks: Array<Task>, today: Date, results, taskType) => {
-  const countTask = tasks.filter((Task) =>
-    FilterTask(today.getTime(), Task, taskType + "At", 1)
-  );
-  results["todayReport"][taskType + "Total"] = countTask.length;
-};
-// set weekly report json value
-const setWeekly = (tasks: Array<Task>, today: Date, results, taskType) => {
-  const countTask = tasks.filter((Task) =>
-    FilterTask(today.getTime(), Task, taskType + "At", 7)
-  );
-  results["weeklyReport"][taskType + "Total"] = countTask.length;
+  const sortByDateAsc = (r1: Report, r2: Report): number =>
+    r1.date < r2.date ? -1 : 1;
+  const responseData: ResponseData = {
+    todayReport: {
+      createdTotal: reportMap[todayString].createdTotal,
+      completedTotal: reportMap[todayString].completedTotal,
+    },
+    weeklyReport: {
+      createdTotal: weeklyReport.createdTotal,
+      completedTotal: weeklyReport.completedTotal,
+    },
+    dailyReport: reposts.sort(sortByDateAsc),
+  };
+  return responseData;
 };
 // getReports API
 export const getReports = async function (req: Request, res: Response) {

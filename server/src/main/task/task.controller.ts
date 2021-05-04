@@ -8,8 +8,6 @@ import { HttpStatus } from "../../common/response/response.type";
 import moment = require("moment");
 
 const taskRoute = Router();
-//把 api 相關內容放進 controller
-//get 取得全部待辦事項
 export const getTasks = async function (req: Request, res: Response) {
   //JWT
   const { id } = res.locals.jwtPayload;
