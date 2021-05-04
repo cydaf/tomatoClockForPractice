@@ -11,7 +11,7 @@ export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: "varchar", length: 200 })
+  @Column({ type: "varchar", length: 200, default: null })
   content: string;
 
   @Column({ type: "varchar", length: 50, default: null })

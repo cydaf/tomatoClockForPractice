@@ -5,11 +5,6 @@ import { asyncHandler } from "../../common/utils";
 import { createPipe } from "./task.pipe";
 
 const taskRoute = Router();
-const asyncHandler = (action) => {
-  return (req, res, next) => {
-    return Promise.resolve(action(req, res, next)).catch(next);
-  };
-};
 taskRoute
   .route("/")
   .get(checkJWT, asyncHandler(controller.getTasks))
