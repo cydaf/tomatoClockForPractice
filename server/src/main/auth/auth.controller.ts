@@ -80,7 +80,6 @@ export const register = async function (req: Request, res: Response) {
 };
 
 export const signin = async function (req: Request, res: Response) {
-  console.log(req.body);
   const { email, password } = req.body;
   const userRepo = getRepository(User);
   const user = await getRepository(User).findOne({ email: email });
@@ -109,8 +108,5 @@ export const signin = async function (req: Request, res: Response) {
   const token = jwt.sign(payload, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
   });
-  console.log(token);
-  return res
-    .status(HttpStatus.OK)
-    .json({ status: HttpStatus.OK, data: { token: token } });
+  return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, data: token });
 };
