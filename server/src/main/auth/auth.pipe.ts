@@ -1,14 +1,14 @@
 import { body, validationResult } from "express-validator";
 const myValidationResult = validationResult.withDefaults({
-  formatter: error => {
-    if(error.msg == "密碼需包含英文大小寫和數字，長度超過8位數"){
-      return {password: error.msg}
+  formatter: (error) => {
+    if (error.msg == "密碼需包含英文大小寫和數字，長度超過8位數") {
+      return { password: error.msg };
     }
-    if(error.msg == "email is required"){
-      return {email: error.msg}
+    if (error.msg == "email is required") {
+      return { email: error.msg };
     }
-    if(error.msg == "email format is invalid"){
-      return {email: error.msg}
+    if (error.msg == "email format is invalid") {
+      return { email: error.msg };
     }
   },
 });
@@ -39,7 +39,6 @@ export const registerPipe = [
     console.log(errorArr);
     if (!errors.isEmpty()) {
       return res.status(401).json({ status: 401, errors: error[0] });
-
     }
     next();
   },

@@ -30,7 +30,8 @@ export const getTasks = async function (req: Request, res: Response) {
     // const dtos = tasks.map((task: Task) => new ResponseTaskDTO(task));
     // console.log(dtos);
     // return formatResponse(dtos, HttpStatus.OK)
-  } else if (filterType === "uncompleted") {
+  }
+  if (filterType === "uncompleted") {
     tasks = await getRepository(Task).find({
       where: { completed: false, userId: id },
     });
@@ -38,7 +39,8 @@ export const getTasks = async function (req: Request, res: Response) {
     // console.log(dtos);
     return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, tasks });
     // return formatResponse(dtos, HttpStatus.OK);
-  } else if (filterType === "") {
+  }
+  if (filterType === "") {
     tasks = await getRepository(Task).find({ where: { userId: id } });
     return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, tasks });
     // const dtos = tasks.map((task: Task) => new ResponseTaskDTO(task));
@@ -123,4 +125,3 @@ export const removeTasks = async function (req: Request, res: Response) {
     return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, data: {} });
   }
 };
-export default taskRoute;
