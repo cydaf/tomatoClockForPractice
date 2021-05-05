@@ -87,7 +87,7 @@ async function register(data) {
 
 async function login(data) {
     const res = await callApi('/auth/signin', 'POST', data);
-
+    console.log(res.data);
     if (res.status == 401) {
         return {
             'status': 'failed',
@@ -98,7 +98,7 @@ async function login(data) {
     return {
         'status': 'success',
         'msg': 'Login Successfully',
-        'token': res.data.token,
+        'token': res.data,
     }
 }
 
