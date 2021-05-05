@@ -16,7 +16,7 @@ const startServer = () => {
   app.use("/api/tasks", taskRoute);
   app.use("/api/reports", reportRoute);
   app.use("/api/auth", authRoute);
-  app.use("/api/user", userRoute);
+  // app.use("/api/user", userRoute);
 
   app.use(defaultExceptionHandler);
 
