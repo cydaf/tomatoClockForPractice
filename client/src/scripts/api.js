@@ -87,7 +87,6 @@ async function register(data) {
 
 async function login(data) {
     const res = await callApi('/auth/signin', 'POST', data);
-    console.log(res.data);
     if (res.status == 401) {
         return {
             'status': 'failed',
