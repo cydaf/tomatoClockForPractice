@@ -43,12 +43,13 @@ const registerAccount = async () => {
             email: email,
             password: password
         });
+        alert(result.msg);
+        location.reload();
     } catch {
         alert('Something went wrong');
         return;
     }
-    alert(result.msg);
-    location.reload();
+    
 }
 
 const loginAccount = async () => {
