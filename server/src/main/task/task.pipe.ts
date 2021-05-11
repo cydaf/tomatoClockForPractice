@@ -28,7 +28,6 @@ export const createPipe = [
       }
       errorObj[param] = msg;
     });
-    console.log(errorArr);
     if (!errors.isEmpty()) {
       return res.status(401).json({ status: 401, errors: error[0] });
 

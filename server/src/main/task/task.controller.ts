@@ -27,25 +27,16 @@ export const getTasks = async function (req: Request, res: Response) {
       where: { completed: true, userId: id },
     });
     return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, tasks });
-    // const dtos = tasks.map((task: Task) => new ResponseTaskDTO(task));
-    // console.log(dtos);
-    // return formatResponse(dtos, HttpStatus.OK)
   }
   if (filterType === "uncompleted") {
     tasks = await getRepository(Task).find({
       where: { completed: false, userId: id },
     });
-    // const dtos = tasks.map((task: Task) => new ResponseTaskDTO(task));
-    // console.log(dtos);
     return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, tasks });
-    // return formatResponse(dtos, HttpStatus.OK);
   }
   if (filterType === "") {
     tasks = await getRepository(Task).find({ where: { userId: id } });
     return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, tasks });
-    // const dtos = tasks.map((task: Task) => new ResponseTaskDTO(task));
-    // console.log(dtos);
-    // return formatResponse( dtos, HttpStatus.OK)
   }
 };
 
