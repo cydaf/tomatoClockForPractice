@@ -11,7 +11,7 @@ export const verify = async function (req: Request, res: Response) {
   const userRepo = getRepository(User);
   const { verifiedCode } = req.query;
   const user = await userRepo.findOne({ where: { verifiedCode } });
-  if (!user || verifiedCode != user.verifiedCode)
+  if (!user)
     return res.status(HttpStatus.UNAUTHORIZED).json({
       status: HttpStatus.UNAUTHORIZED,
       auth: false,
@@ -22,31 +22,31 @@ export const verify = async function (req: Request, res: Response) {
     "YYYY-MM-DDTHH:mm:ss.SSS"
   );
   const results = userRepo.save(user);
-
   return res.status(HttpStatus.OK).redirect(process.env.Redirect);
 };
 
 export const register = async function (req: Request, res: Response) {
   const { name, email, password } = req.body;
-  const emailRepo = await getRepository(User).find({
+  const userRepo = getRepository(User);
+  const emailRepo = await userRepo.find({
     where: { email: req.body.email },
   });
   if (emailRepo.length != 0) {
-    return res
-      .status(HttpStatus.UNAUTHORIZED)
-      .json({ status: HttpStatus.UNAUTHORIZED, errors: "email has been used" });
+    return res.status(HttpStatus.UNAUTHORIZED).json({
+      status: HttpStatus.UNAUTHORIZED,
+      errors: { email: "email has been used" },
+    });
   }
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   const verifiedCode = await bcrypt.hash("ABCD12345", salt);
-  const newUser = getRepository(User).create({
+  const newUser = userRepo.create({
     name: name,
     email: email,
     password: hashedPassword,
     verifiedCode: verifiedCode,
   });
-  const results = await getRepository(User).save(newUser);
-
+  const results = userRepo.save(newUser);
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -62,8 +62,8 @@ export const register = async function (req: Request, res: Response) {
       "Hello " +
       req.body.name +
       ",\n\n" +
-      "Please verify your account by clicking the link: \nhttp://" +
-      req.headers.host +
+      "Please verify your account by clicking the link: \n" +
+      process.env.verify +
       "/api/auth/verify?verifiedCode=" +
       verifiedCode +
       "\n\nThank You!\n", // plain text body
@@ -71,10 +71,12 @@ export const register = async function (req: Request, res: Response) {
 
   transporter.sendMail(mailOptions, function (err, response) {
     if (err) {
+      return res.status(HttpStatus.BAD_REQUEST);
     } else {
-      return res
-        .status(HttpStatus.OK)
-        .json({ status: HttpStatus.OK, messgae: "please verify email" });
+      return res.status(HttpStatus.OK).json({
+        status: HttpStatus.OK,
+        data: { message: "please verify email", verified: false },
+      });
     }
   });
 };

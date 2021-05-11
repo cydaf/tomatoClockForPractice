@@ -1,16 +1,6 @@
 import $ from 'jquery';
 import { register, login, getUser, getToken } from './api';
 
-var ONE_HOUR = 3600 * 1000;
-
-const setToken = (token) => {
-    const tokenData = {
-        token: token,
-        expiredAt: new Date().getTime() + ONE_HOUR
-    }
-    localStorage.setItem('tokenData', JSON.stringify(tokenData))
-}
-
 const showLoginCard = () => {
     $('#login-card').show();
     $('#register-card').hide();
@@ -53,12 +43,13 @@ const registerAccount = async () => {
             email: email,
             password: password
         });
+        alert(result.msg);
+        location.reload();
     } catch {
         alert('Something went wrong');
         return;
     }
-    alert(result.msg);
-    location.reload();
+    
 }
 
 const loginAccount = async () => {
@@ -75,7 +66,7 @@ const loginAccount = async () => {
             password: password
         });
         const token = result.token;
-        setToken(token);
+        localStorage.setItem('token', token);
         const userData = await getUser(token);
         const username = userData.data.name;
 

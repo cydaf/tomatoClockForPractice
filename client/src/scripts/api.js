@@ -20,17 +20,11 @@ function callApi(url, method = 'GET', data = {}, header = {}) {
 }
 
 const getToken = () => {
-    const tokenJsonData = localStorage.getItem('tokenData');
-    if (!tokenJsonData) {
+    const token = localStorage.getItem('token');
+    if (token === 'undefined') {
         return "";
     }
-    const tokenData = JSON.parse(tokenJsonData);
-    const now = new Date()
-    if (now.getTime() > tokenData.expiredAt) {
-        localStorage.removeItem('tokenData')
-        return ""
-    }
-    return tokenData.token;
+    return token;
 }
 
 async function getAllTasks(needFilter = false, filterStatus = null) {

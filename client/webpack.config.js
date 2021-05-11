@@ -1,8 +1,7 @@
 // 載入轉存 css 檔案的套件
 const path = require('path');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 var config = {
     mode: 'development',
@@ -33,8 +32,7 @@ var config = {
         new HtmlWebpackPlugin({
           template: './src/index.html',
           inject: false
-        }),
-        new Dotenv(),
+        })
     ],
     devServer: {
       contentBase: path.join(__dirname, 'dist'),
