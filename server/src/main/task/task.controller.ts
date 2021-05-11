@@ -85,7 +85,7 @@ export const updateTasks = async function (req: Request, res: Response) {
     if (req.body.completed) {
       task.completed = req.body.completed;
       if (req.body.completed == true)
-        task.completedAt = String(moment().format("MMMM Do YYYY, h:mm:ss a"));
+        task.completedAt = String(moment().format());
     }
     const updatedTask = await taskRepository.save(task);
     const results = taskRepository.save(updatedTask);
