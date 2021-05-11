@@ -3,4 +3,5 @@ dist/*.css
 dist/*.js
 dist/*.map
 dist/*.html
+.env
 
