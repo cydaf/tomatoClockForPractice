@@ -110,5 +110,7 @@ export const signin = async function (req: Request, res: Response) {
   const token = jwt.sign(payload, process.env.TOKEN_SECRET, {
     expiresIn: "1h",
   });
-  return res.status(HttpStatus.OK).json({ status: HttpStatus.OK, data: token });
+  return res
+    .status(HttpStatus.OK)
+    .json({ status: HttpStatus.OK, data: { token: token } });
 };
