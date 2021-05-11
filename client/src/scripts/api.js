@@ -97,7 +97,7 @@ async function login(data) {
     return {
         'status': 'success',
         'msg': 'Login Successfully',
-        'token': res.data,
+        'token': res.data.token,
     }
 }
 
