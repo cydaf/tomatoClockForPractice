@@ -1,0 +1,12 @@
+{
+    "type": "postgres",
+    "host": "localhost",
+    "port": 54321,
+    "username": "postgres",
+    "password": "Pass2020!",
+    "database": "postgres",
+    "entities": ["src/entity/*.ts"],
+    "logging": true,
+    "logger": "file",
+    "synchronize": true
+}
