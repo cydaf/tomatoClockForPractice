@@ -20,11 +20,17 @@ function callApi(url, method = 'GET', data = {}, header = {}) {
 }
 
 const getToken = () => {
-    const token = localStorage.getItem('token');
-    if (token === 'undefined') {
+    const tokenJsonData = localStorage.getItem('tokenData');
+    if (!tokenJsonData) {
         return "";
     }
-    return token;
+    const tokenData = JSON.parse(tokenJsonData);
+    const now = new Date()
+    if (now.getTime() > tokenData.expiredAt) {
+        localStorage.removeItem('tokenData')
+        return ""
+    }
+    return tokenData.token;
 }
 
 async function getAllTasks(needFilter = false, filterStatus = null) {
@@ -97,7 +103,7 @@ async function login(data) {
     return {
         'status': 'success',
         'msg': 'Login Successfully',
-        'token': res.data,
+        'token': res.data.token,
     }
 }
 
