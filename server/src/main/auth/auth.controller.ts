@@ -55,8 +55,8 @@ export const register = async function (req: Request, res: Response) {
       "Hello " +
       req.body.name +
       ",\n\n" +
-      "Please verify your account by clicking the link: \nhttp://" +
-      req.headers.host +
+      "Please verify your account by clicking the link: \n" +
+      process.env.verify +
       "/api/auth/verify?verifiedCode=" +
       verifiedCode +
       "\n\nThank You!\n",
