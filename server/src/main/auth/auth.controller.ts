@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { User } from "../../entity/User";
 import { HttpStatus } from "../../common/response/response.type";
-import * as nodemailer from "nodemailer";
 import * as moment from "moment";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcryptjs";
