@@ -6,7 +6,7 @@ import * as nodemailer from "nodemailer";
 import * as moment from "moment";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcryptjs";
-
+import * as sgMail from "@sendgrid/mail";
 export const verify = async function (req: Request, res: Response) {
   const userRepo = getRepository(User);
   const { verifiedCode } = req.query;
@@ -22,7 +22,6 @@ export const verify = async function (req: Request, res: Response) {
     "YYYY-MM-DDTHH:mm:ss.SSS"
   );
   const results = userRepo.save(user);
-
   return res.status(HttpStatus.OK).redirect(process.env.Redirect);
 };
 
@@ -46,18 +45,12 @@ export const register = async function (req: Request, res: Response) {
     verifiedCode: verifiedCode,
   });
   const results = await getRepository(User).save(newUser);
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.USEREMAIL,
-      pass: process.env.PASSWORD,
-    },
-  });
-  var mailOptions = {
-    from: process.env.USEREMAIL, // sender address
-    to: email, // list of receivers
-    subject: "Email Verification", // Subject line
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  // you can use either text or html
+  const msg = {
+    to: email, // Change to your recipient
+    from: "b123105@gmail.com", // have to use my email account
+    subject: "Email Verification",
     text:
       "Hello " +
       req.body.name +
@@ -66,17 +59,19 @@ export const register = async function (req: Request, res: Response) {
       req.headers.host +
       "/api/auth/verify?verifiedCode=" +
       verifiedCode +
-      "\n\nThank You!\n", // plain text body
+      "\n\nThank You!\n",
   };
 
-  transporter.sendMail(mailOptions, function (err, response) {
-    if (err) {
-    } else {
+  sgMail
+    .send(msg)
+    .then(() => {
       return res
         .status(HttpStatus.OK)
         .json({ status: HttpStatus.OK, messgae: "please verify email" });
-    }
-  });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 };
 
 export const signin = async function (req: Request, res: Response) {
