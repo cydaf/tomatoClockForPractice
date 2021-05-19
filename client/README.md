@@ -10,7 +10,7 @@ This project uses the following tools. Go check them out if you don't have them 
 - [node、npm](https://nodejs.org/en/)
 
 ```
-git clone https://github.com/AlanSyue/tomatoClockForPractice.git
+git clone https://github.com/cydaf/tomatoClockForPractice.git
 cd tomatoClockForPractice
 npm install
 npm run start
