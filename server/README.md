@@ -9,14 +9,14 @@ This project uses the following tools. Go check them out if you don't have them 
 
 Build the project.
 
-1. git clone git@github.com:AlanSyue/tomatoClockForPractice.git
+1. git clone https://github.com/cydaf/tomatoClockForPractice.git
 2. cd tomatoClockForPractice/server
 3. npm install
 4. docker-compose up -d
 5. npm run start
 
 ## API Spec
-[document](https://hackmd.io/kBm7TsFPRNySgCK619LUmw)
+[document](https://hackmd.io/vMKpHbg2TQOqUy2zRgtTcA?view)
 
 ### Overview
 
@@ -25,11 +25,19 @@ Header
 - Content-Type: application/json
 
 API 簡介
-- GET  `/api/tasks` 取得全部待辦事項
-- POST `/api/tasks` 新增待辦事項 
+
+- POST `/api/auth/register` 註冊
+- GET `/api/auth/verify` 驗證
+- POST `/api/auth/signin` 登入
+- POST `/api/auth/forgetpassword` 忘記密碼
+- GET `/api/auth/resendemail` 重寄驗證信
+- GET `/api/user` 使用者資料
+- GET `/api/tasks` 取得全部待辦事項
+- POST `/api/tasks` 新增待辦事項
 - PATCH `/api/tasks/:id` 修改指定待辦事項資料
 - DELETE `/api/tasks/:id` 刪除待辦事項
 - GET `/api/reports` 取得專注度報表
+
 
 ### 取得全部待辦事項 GET `/api/tasks` 
 
