@@ -2,10 +2,10 @@
 This is a project to practice implementing API, you can use any backend language to implement it.
 
 ## Demo
-[link](https://alansyue.dev.newideas.com.tw)
+[link](https://michelle.dev.newideas.com.tw)
 
 ## How to set up
-backend: [README](https://github.com/AlanSyue/tomatoClockForPractice/tree/main/server)
+backend: [README](https://github.com/cydaf/tomatoClockForPractice/tree/main/server)
 
-frontend: [README](https://github.com/AlanSyue/tomatoClockForPractice/tree/main/client)
+frontend: [README](https://github.com/cydaf/tomatoClockForPractice/tree/main/client)
 
