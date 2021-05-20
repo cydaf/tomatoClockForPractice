@@ -39,10 +39,279 @@ API 簡介
 - GET `/api/reports` 取得專注度報表
 
 
-### 取得全部待辦事項 GET `/api/tasks` 
+### Register POST `/api/auth/register`
+Request Parameter
+```jsx
+{
+    // required parameters
+    name: "string",
+    email: "string",
+    password: "number"
+}
+```
+Response success (email未註冊過)
+```jsx
+{
+    status: 200,
+    data:{
+        message: "please verify email",
+        verified: false
+    }
+}
+```
 
+Response failure (password 格式不符合 or email 已經被使用)
+
+1. 密碼格式不符合
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "",
+        password: "密碼需包含英文大小寫和數字，長度超過8位數"
+    }
+}
+```
+2. email 已經存在
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "email has been used",
+        password: ""
+    }
+}
+```
+3. 需填入 email 
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "email is required",
+        password: ""
+    }
+}
+```
+4. email 格式錯誤
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "email format is invalid",
+        password: ""
+    }
+}
+```
+### Verify GET `/api/auth/verify`
+Request Parameter
+```jsx
+{
+    // required parameters
+    id: 
+    verifiedCode: 
+}
+```
+
+
+Response success (email 已驗證)
+```jsx
+{
+    status: 200,
+    message: "signup success"
+}
+```
+
+Response failure (email 失敗)
+```jsx
+{
+    status: 401,
+    message: "link incorrect"
+}
+```
+
+### Signin POST `/api/auth/signin`
+Request Parameter
+```jsx
+{
+    // required parameters
+    email: "string",
+    password: "string"
+}
+```
+
+
+Response success
+```jsx
+{
+    status: 200,
+    data: {
+        token:.....,
+    }
+}
+```
+
+Response failure (2 種情境：email 不存在 or password 錯誤 )
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "email doesn't exist",
+        password: ""
+    }
+}
+```
+
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "",
+        password: "password incorrect"
+    }
+}
+
+```
+
+### 寄送重設密碼信件 POST `/api/auth/send_forgetPassword_email`
 
 Request Parameter
+```jsx
+{
+    // required parameters
+    email: "string"
+}
+```
+
+Response success
+```jsx
+{
+    status: 200,
+    data: {
+        result: "ok"
+    }
+}
+```
+
+=> 寄信給 email，帶上
+localhost:3000/resetPasswordByToken?id={userId}&toke={token}
+
+=> 進入前端 => 呈現表單輸入新密碼
+=> 送出會打 POST `/api/auth/forgetpassword`
+
+
+
+### forgetPassword POST `/api/auth/forgetpassword`
+Request Parameter
+```jsx
+{
+    // required parameters
+    userId: "string", // userId
+    password: "string"
+    verifyToken: "....."
+}
+```
+
+
+Response success
+```jsx
+{
+    status: 200,
+    data: {
+        token:.....,
+    }
+}
+```
+
+Response failure
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "email doesn't exist",
+        password: ""
+    }
+}
+```
+Response failure
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "",
+        password: "密碼需包含英文大小寫和數字，長度超過8位數"
+    }
+}
+```
+### resendemail GET `/api/auth/resend_verify_email`
+Request Parameter
+```jsx
+{
+    // required parameters
+    email: "string"
+}
+```
+
+
+Response success
+```jsx
+{
+    status: 200,
+    message: "verification resent"
+}
+```
+
+Response failure
+```jsx
+{
+    status: 401,
+    errors: {
+        email: "email doesn't exist",
+        password: ""
+    }
+}
+```
+
+### user GET `/api/user`
+Request Header
+```jsx
+{
+    // required parameters
+    token: "string"
+}
+```
+Response success
+```jsx
+{
+    status: 200,
+    data: {
+        email:....,
+        name:.....
+    }
+}
+```
+Response failure
+```jsx
+{
+    status: 401,
+    message: "token incorrect"
+}
+```
+Response failure（token 過期、沒給 token）
+```jsx
+{
+    status: 401,
+    message: "please login"
+}
+```
+### 取得全部待辦事項 GET `/api/tasks` 
+Request Header
+```jsx
+{
+    // required parameters
+    token: "string"
+}
+```
+Request Parameter (Params)
 ```jsx
 {
     // optional parameter
@@ -81,6 +350,13 @@ Response
     }
 }
 ```
+Response failure（token 過期、沒給 token）
+```jsx
+{
+    status: 401,
+    message: "please login"
+}
+```
 
 Testing curl
 ```jsx
@@ -88,8 +364,14 @@ curl -H "Accept: application/json" -H "Content-Type: application/json" -X GET ht
 ```
 
 ### 新增待辦事項 POST `/api/tasks` 
-
-Request Parameter
+Request Header
+```jsx
+{
+    // required parameters
+    token: "string"
+}
+```
+Request Parameter (Body)
 ```jsx
 {
     // required ""
@@ -126,6 +408,13 @@ Response Failure
     message: "'content' is required parameter."
 }
 ```
+Response failure（token 過期、沒給 token）
+```jsx
+{
+    status: 401,
+    message: "please login"
+}
+```
 
 Testing Curl
 
@@ -136,7 +425,14 @@ curl -X POST -H "Content-Type: application/json" -d '{"content" : "必修課作�
 
 ### 修改指定待辦事項資料 Patch `/api/tasks/:id` 
 
-Request Parameter
+Request Header
+```jsx
+{
+    token: "string"
+}
+```
+
+Request Parameter (Body)
 ```jsx
 {
     // optional parameter
@@ -163,6 +459,13 @@ Response Success
     }
 }
 ```
+Response failure（token 過期、沒給 token）
+```jsx
+{
+    status: 401,
+    message: "please login"
+}
+```
 
 Testing Curl
 
@@ -176,10 +479,11 @@ curl -X PATCH -H "Content-Type: application/json" -d '{"completed" : "true" }' "
 
 ### 刪除待辦事項 DELETE `/api/tasks/:id` 
 
-Request
-
+Request Header
 ```jsx
-{}
+{
+    token: "string"
+}
 ```
 
 Response Success
@@ -190,7 +494,13 @@ Response Success
     data: {}
 }
 ```
-
+Response failure（token 過期、沒給 token）
+```jsx
+{
+    status: 401,
+    message: "please login"
+}
+```
 
 Testing Curl
 
@@ -200,10 +510,12 @@ curl -X DELETE "https://yourapiserver/api/tasks/1"
 
 ### 取得專注度報表 GET `/api/reports`
 
-Request Parameter
-
+Request Header
 ```jsx
-{}
+{
+    // required parameters
+    token: "string"
+}
 ```
 
 Response Success
@@ -232,7 +544,13 @@ Response Success
     }
 }
 ```
-
+Response failure（token 過期、沒給 token）
+```jsx
+{
+    status: 401,
+    message: "please login"
+}
+```
 
 Testing curl
 ```jsx
